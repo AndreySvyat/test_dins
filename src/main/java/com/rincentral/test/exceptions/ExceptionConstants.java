@@ -9,9 +9,9 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RequiredArgsConstructor
 @Getter
-public enum ExceptionData {
+public enum ExceptionConstants {
     TO_MUCH_PARAMS_PRESENTED("Set only model or brand", BAD_REQUEST),
-    EMPTY_DATA("There is no data presented", NOT_FOUND),
+    EMPTY_PARAMETER("At least one of parameters must be set", NOT_FOUND),
     NO_SUCH_BRAND("Brand with id or name { %s } is not presented", NOT_FOUND),
     NO_SUCH_MODEL("Model %s is not presented", NOT_FOUND);
 

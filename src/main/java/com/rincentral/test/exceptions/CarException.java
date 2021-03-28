@@ -5,15 +5,15 @@ import lombok.Getter;
 @Getter
 public class CarException extends RuntimeException {
 
-    public CarException(ExceptionData exceptionData) {
-        super(exceptionData.getMessageTemplate());
-        this.exceptionData = exceptionData;
+    public CarException(ExceptionConstants exceptionConstants) {
+        super(exceptionConstants.getMessageTemplate());
+        this.exceptionConstants = exceptionConstants;
     }
 
-    public CarException(String message, ExceptionData exceptionData) {
+    public CarException(String message, ExceptionConstants exceptionConstants) {
         super(message);
-        this.exceptionData = exceptionData;
+        this.exceptionConstants = exceptionConstants;
     }
 
-    private final ExceptionData exceptionData;
+    private final ExceptionConstants exceptionConstants;
 }

@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.rincentral.test.exceptions.ExceptionData.NO_SUCH_BRAND;
+import static com.rincentral.test.exceptions.ExceptionConstants.NO_SUCH_BRAND;
 import static java.lang.String.format;
 
 @Service
@@ -56,7 +56,7 @@ public class DataContainer {
                           .modification(car.getModification())
                           .body(addBody(info))
                           .engine(addEngine(info))
-                          .masSpeed(info.getMaxSpeed())
+                          .maxSpeed(info.getMaxSpeed())
                           .acceleration(info.getAcceleration())
                           .gearboxType(info.getGearboxType())
                           .wheelDrive(info.getWheelDriveType())
@@ -65,29 +65,27 @@ public class DataContainer {
                           .build();
     }
 
-    private int addBody(ExternalCarInfo info){
-        List<String> styleNames = Arrays.asList(info.getBodyStyle().split("\\s*,\\s*"));
-        bodyStyles.putAll(styleNames.stream().collect(Collectors.toMap(String::hashCode, name->name)));
+    private BodyCharacteristics addBody(ExternalCarInfo info){
         BodyCharacteristics body = BodyCharacteristics.builder()
-                                                      .bodyStyles(styleNames.stream().map(String::hashCode).collect(Collectors.toList()))
+                                                      .bodyStyles(Arrays.asList(info.getBodyStyle().split("\\s*,\\s*")))
                                                       .length(info.getBodyLength())
                                                       .height(info.getBodyHeight())
                                                       .width(info.getBodyWidth())
                                                       .build();
         int bodyId = body.hashCode();
         bodies.put(bodyId, body);
-        return bodyId;
+        return body;
     }
 
-    private int addEngine(ExternalCarInfo info){
+    private EngineCharacteristics addEngine(ExternalCarInfo info){
         EngineCharacteristics engine = EngineCharacteristics.builder()
                                                             .displacement(info.getEngineDisplacement())
                                                             .engineType(info.getEngineType())
                                                             .fuel(info.getFuelType())
                                                             .hpw(info.getHp())
                                                             .build();
-        int engineID = engine.hashCode();
-        engines.put(engineID, engine);
-        return engineID;
+        int engineId = engine.hashCode();
+        engines.put(engineId, engine);
+        return engine;
     }
 }

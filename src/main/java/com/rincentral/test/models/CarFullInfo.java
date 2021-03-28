@@ -26,7 +26,7 @@ public class CarFullInfo {
 
     private String modification;
 
-    private Integer masSpeed;
+    private Integer maxSpeed;
 
     private Double acceleration;
 
@@ -38,7 +38,7 @@ public class CarFullInfo {
 
     private Integer yearExpired;
 
-    private Integer body;
+    private BodyCharacteristics body;
 
-    private Integer engine;
+    private EngineCharacteristics engine;
 }

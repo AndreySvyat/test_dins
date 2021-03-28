@@ -10,6 +10,6 @@ public class CarExceptionHandler {
 
     @ExceptionHandler
     protected ResponseEntity<String> handleException(CarException carException){
-        return new ResponseEntity<>(carException.getMessage(), carException.getExceptionData().getHttpStatus());
+        return new ResponseEntity<>(carException.getMessage(), carException.getExceptionConstants().getHttpStatus());
     }
 }

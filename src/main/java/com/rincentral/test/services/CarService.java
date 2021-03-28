@@ -1,8 +1,7 @@
 package com.rincentral.test.services;
 
 import com.rincentral.test.exceptions.CarException;
-import com.rincentral.test.models.CarFullInfo;
-import com.rincentral.test.models.CarInfo;
+import com.rincentral.test.models.*;
 import com.rincentral.test.models.enums.EngineType;
 import com.rincentral.test.models.enums.FuelType;
 import com.rincentral.test.models.enums.GearboxType;
@@ -17,10 +16,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.rincentral.test.exceptions.ExceptionData.EMPTY_DATA;
-import static com.rincentral.test.exceptions.ExceptionData.NO_SUCH_BRAND;
-import static com.rincentral.test.exceptions.ExceptionData.NO_SUCH_MODEL;
-import static com.rincentral.test.exceptions.ExceptionData.TO_MUCH_PARAMS_PRESENTED;
+import static com.rincentral.test.exceptions.ExceptionConstants.EMPTY_PARAMETER;
+import static com.rincentral.test.exceptions.ExceptionConstants.NO_SUCH_BRAND;
+import static com.rincentral.test.exceptions.ExceptionConstants.NO_SUCH_MODEL;
+import static com.rincentral.test.exceptions.ExceptionConstants.TO_MUCH_PARAMS_PRESENTED;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
@@ -28,8 +27,54 @@ import static java.lang.String.format;
 public class CarService {
     private final DataContainer dataContainer;
 
-    public List<CarInfo> getCars(CarRequestParameters params){
-        return new ArrayList<>();
+    public List<? extends CarInfoData> getCars(CarRequestParameters params){
+        Stream<CarFullInfo> carsStream = dataContainer.getCars().values().stream();
+        if(params.getCountry() != null)
+            carsStream = carsStream.filter(car -> params.getCountry().equals(car.getCountry()));
+        if(params.getSegment() != null)
+            carsStream = carsStream.filter(car -> params.getSegment().equals(car.getSegment()));
+        if(params.getMinEngineDisplacement() != null){
+            carsStream = carsStream
+                    .filter(car -> (params.getMinEngineDisplacement() * 1000) <= car.getEngine().getDisplacement());
+        }
+        if(params.getMinEngineHorsepower() != null){
+            carsStream = carsStream
+                    .filter(car -> params.getMinEngineHorsepower() <= car.getEngine().getHpw());
+        }
+        if(params.getMinMaxSpeed() != null){
+            carsStream = carsStream
+                    .filter(car -> params.getMinMaxSpeed() <= car.getMaxSpeed());
+        }
+        if(params.getSearch() != null){
+            carsStream = carsStream
+                    .filter(car -> car.getModel().contains(params.getSearch())
+                            || car.getGeneration().contains(params.getSearch())
+                            || car.getModification().contains(params.getSearch()));
+        }
+
+        return carsStream.map(car -> params.getIsFull() != null && params.getIsFull() ?
+                                     CarInfoExtended.builder()
+                                                    .id(car.getId())
+                                                    .segment(car.getSegment())
+                                                    .brand(car.getBrand())
+                                                    .model(car.getModel())
+                                                    .country(car.getCountry())
+                                                    .generation(car.getGeneration())
+                                                    .modification(car.getModification())
+                                                    .body(car.getBody())
+                                                    .engine(car.getEngine())
+                                                    .build() :
+                                     CarInfo.builder()
+                                            .id(car.getId())
+                                            .segment(car.getSegment())
+                                            .brand(car.getBrand())
+                                            .model(car.getModel())
+                                            .country(car.getCountry())
+                                            .generation(car.getGeneration())
+                                            .modification(car.getModification())
+                                            .build())
+
+                         .collect(Collectors.toList());
     }
 
     public List<String> getAllFuelTypes(){
@@ -58,20 +103,17 @@ public class CarService {
         if(params.getModel() != null) {
             return dataContainer.getCars().values().stream()
                                 .filter(car -> params.getModel().equals(car.getModel()))
-                                .mapToInt(CarFullInfo::getMasSpeed)
+                                .mapToInt(CarFullInfo::getMaxSpeed)
                                 .average()
                                 .orElseThrow(() -> new CarException(format(NO_SUCH_MODEL.getMessageTemplate(), params.getModel()), NO_SUCH_MODEL));
         }
         if(params.getBrand() != null){
             return dataContainer.getCars().values().stream()
                                 .filter(car -> params.getBrand().equals(car.getBrand()))
-                                .mapToInt(CarFullInfo::getMasSpeed)
+                                .mapToInt(CarFullInfo::getMaxSpeed)
                                 .average()
                                 .orElseThrow(() -> new CarException(format(NO_SUCH_BRAND.getMessageTemplate(), params.getBrand()), NO_SUCH_BRAND));
         }
-        return dataContainer.getCars().values().stream()
-                            .mapToInt(CarFullInfo::getMasSpeed)
-                            .average()
-                            .orElseThrow(() -> new CarException(NO_SUCH_MODEL));
+        throw new CarException(EMPTY_PARAMETER);
     }
 }

@@ -1,9 +1,6 @@
 package com.rincentral.test.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rincentral.test.models.enums.GearboxType;
-import com.rincentral.test.models.enums.WheelDriveType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @AllArgsConstructor
-public class CarInfo implements CarInfoData{
+public class CarInfoExtended  implements CarInfoData{
     @JsonProperty("id")
     private Integer id;
 
@@ -34,4 +31,8 @@ public class CarInfo implements CarInfoData{
 
     @JsonProperty("modification")
     private String modification;
+
+    private EngineCharacteristics engine;
+
+    private BodyCharacteristics body;
 }

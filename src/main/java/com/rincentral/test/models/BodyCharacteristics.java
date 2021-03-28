@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class BodyCharacteristics {
-    private List<Integer> bodyStyles;
+    private List<String> bodyStyles;
     private int length;
     private int width;
     private int height;

@@ -1,6 +1,7 @@
 package com.rincentral.test.controllers;
 
 import com.rincentral.test.models.CarInfo;
+import com.rincentral.test.models.CarInfoData;
 import com.rincentral.test.models.params.CarRequestParameters;
 import com.rincentral.test.models.params.MaxSpeedRequestParameters;
 import com.rincentral.test.services.CarService;
@@ -19,7 +20,7 @@ public class ApiController {
     private final CarService carService;
 
     @GetMapping("/cars")
-    public ResponseEntity<List<CarInfo>> getCars(CarRequestParameters requestParameters) {
+    public ResponseEntity<List<? extends CarInfoData>> getCars(CarRequestParameters requestParameters) {
         return ResponseEntity.ok(carService.getCars(requestParameters));
     }
 
